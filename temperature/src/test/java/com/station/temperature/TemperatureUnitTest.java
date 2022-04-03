@@ -3,7 +3,6 @@ package com.station.temperature;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.List;
 import org.junit.Test;
-
 import com.station.temperature.constant.ResultType;
 import com.station.temperature.entity.Temperature;
 import com.station.temperature.model.ReturnModel;
@@ -18,7 +17,6 @@ public class TemperatureUnitTest extends Abstract {
 		assertEquals(result, true);
 		
 	}
-	
 	
 	@Test
 	public void testGetBetweenDatastampDao() {
