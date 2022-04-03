@@ -3,12 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link href="/temperature/css/jquery-ui.min.css" rel="stylesheet">
+<link href="/temperature/css/jquery-ui-timepicker-addon.css"
+	rel="stylesheet">
 <script src="/temperature/js/jquery.min.js"></script>
+<script src="/temperature/js/jquery-ui.min.js"></script>
+<script src="/temperature/js/jquery-ui-timepicker-addon.min.js"></script>
+<style type="text/css">
+.changeBorderColor {
+  border-color: red;
+}
+
+</style>
 <script type="text/javascript">
-	function serach() {
-		var obj = {};
-		obj.startTime = "2021-12-28 00:00:00";
-		obj.endTime = "2021-12-29 00:00:00";
+	$(function() {
+		$('#startDate,#endDate').datetimepicker({
+			"dateFormat" : "yy/mm/dd",
+			"timeFormat" : "HH",
+			"hour" : "08",
+			"yearRange" : "-10:+10",
+			"changeMonth" : true,
+			"changeYear" : true
+		});
+		
+		$( "#btn" ).click(function() {
+			
+			$("#startDate").removeClass("changeBorderColor");
+			$("#endDate").removeClass("changeBorderColor");
+			
+			
+			let startTime = $("#startDate").val();
+			let endTime = $("#endDate").val();
+			let startMin = $('#startMin').val();
+			let endMin = $('#startMin').val();
+			let errorMsg = checkInput(startTime,endTime,startMin,endMin);
+			if(errorMsg){
+				alert(errorMsg);
+				return;
+			}
+			ajaxCall(startTime,endTime,startMin,endMin);
+		});	
+	});
+
+	function checkInput(startTime,endTime,startMin,endMin){
+		
+		let errorMsg = "";
+		if (!startTime) {
+			$("#startDate").addClass("changeBorderColor");
+			errorMsg += "請輸入開始日期\n";
+		}
+		if (!endTime) {
+			$("#endDate").addClass("changeBorderColor");
+			errorMsg += "請輸入結束日期\n";
+		}
+
+		if (!errorMsg) {
+			let startDateTemp = startTime.split("/");
+			let endDateTemp = endTime.split("/");
+			let arrStartDate = startDateTemp[2].split(" ");
+			let arrEndDate = endDateTemp[2].split(" ");
+
+			let allStartDate = new Date(startDateTemp[0], startDateTemp[1],
+					arrStartDate[0], arrStartDate[1], startMin);
+			let allEndDate = new Date(endDateTemp[0], endDateTemp[1],
+					arrEndDate[0], arrEndDate[1], endMin);
+			if (allStartDate.getTime() >= allEndDate.getTime()) {
+				$("#startDate").addClass("changeBorderColor");
+				$("#endDate").addClass("changeBorderColor");
+				errorMsg += "開始時間需晚於結束時間";
+			}
+		}
+		return errorMsg;
+	}
+	
+	function ajaxCall(startTime,endTime,startMin,endMin){
+		let obj = {};
+		obj.startTime = startTime + ":" + startMin + ":00";
+		obj.endTime = endTime + ":" + endMin + ":00";
 
 		$.ajax({
 			type : "POST",
@@ -18,7 +89,7 @@
 			contentType : 'application/json; charset=utf-8',
 			data : JSON.stringify(obj),
 			success : function(data) {
-				if(data.result == "success"){
+				if (data.result == "success") {
 					alert(data);
 				} else {
 					alert(data.message);
@@ -27,13 +98,25 @@
 			error : function(xhr, ajaxOption, error) {
 				alert(xhr.responseText);
 			}
-		})
+		});
 	}
 </script>
 </head>
 <body>
-
-	<button onclick="serach();">搜尋</button>
-
+	<input id="startDate" name="startDate" />
+	<select id="startMin">
+		<option value="00">00</option>
+		<option value="30">30</option>
+	</select> 請輸入開始日期時間
+	</br>
+	</br>
+	<input id="endDate" name="endDate" />
+	<select id="endMin">
+		<option value="00">00</option>
+		<option value="30">30</option>
+	</select> 請輸入結束日期時間
+	</br>
+	</br>
+	<button id="btn">搜尋</button>
 </body>
 </html>
