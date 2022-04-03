@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="/temperature/js/jquery.min.js"></script>
+<script type="text/javascript">
+	function serach() {
+		var obj = {};
+		obj.startTime = "2021-12-28 00:00:00";
+		obj.endTime = "2021-12-29 00:00:00";
+
+		$.ajax({
+			type : "POST",
+			url : "/temperature/api/temperature/average",
+			async : false,
+			dataType : 'json',
+			contentType : 'application/json; charset=utf-8',
+			data : JSON.stringify(obj),
+			success : function(data) {
+				if(data.result == "success"){
+					alert(data);
+				} else {
+					alert(data.message);
+				}
+			},
+			error : function(xhr, ajaxOption, error) {
+				alert(xhr.responseText);
+			}
+		})
+	}
+</script>
+</head>
+<body>
+
+	<button onclick="serach();">搜尋</button>
+
+</body>
+</html>

@@ -11,6 +11,6 @@ public class ReturnModel {
 	
 	private ResultType result;
 	private String message;
-	private List<Double> categoryVOList;
+	private List<Double> averageList;
 	
 }
