@@ -23,7 +23,6 @@ public class TemperatureUnitTest extends Abstract {
 		
 		String startTime = "2021-12-28 15:10:10";
 		String endTime = "2021-12-28 15:11:10";
-		
 		List<Temperature> temperatureList = temperatureRepository.getBetweenDatastamp(startTime, endTime);
 		assertEquals(120, temperatureList.size());
 		
@@ -34,7 +33,6 @@ public class TemperatureUnitTest extends Abstract {
 		
 		String startTime = "2021-12-28 15:10:10";
 		String endTime = "2021-12-28 15:11:10";
-		
 		ReturnModel returnModel = temperatureSerivceImpl.getBetweenDatastamp(startTime, endTime);
 		assertEquals(ResultType.success, returnModel.getResult());
 		
