@@ -11,6 +11,7 @@ import com.station.temperature.entity.Temperature;
 @Repository
 public interface TemperatureRepository extends JpaRepository<Temperature, Integer> {
 
-	@Query(nativeQuery = true, value = "select value from temperature where datastamp >= :startTime and datastamp < :endTime order by datastamp ")
-	List<String> getBetweenDatastamp(@Param("startTime") String startTime,@Param("endTime") String endTime);
+	@Query(nativeQuery = true, value = "select * from temperature where datastamp >= :startTime and datastamp < :endTime order by datastamp ")
+	List<Temperature> getBetweenDatastamp(@Param("startTime") String startTime,@Param("endTime") String endTime);
+
 }

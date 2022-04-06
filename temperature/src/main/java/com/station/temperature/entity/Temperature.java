@@ -35,4 +35,7 @@ public class Temperature {
 	
 	@Column(name = "value")
 	private String value;
+	
+	@Column(name = "station")
+	private String station;
 }

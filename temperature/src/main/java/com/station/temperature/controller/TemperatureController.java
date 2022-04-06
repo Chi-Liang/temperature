@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.station.temperature.model.ReturnModel;
-import com.station.temperature.model.TemperatureModel;
+import com.station.temperature.model.TimeIntervalModel;
 import com.station.temperature.service.impl.TemperatureSerivceImpl;
 
 @RestController
@@ -18,9 +18,9 @@ public class TemperatureController {
 	private TemperatureSerivceImpl temperatureSerivceImpl;
 	
 	@PostMapping("/temperature/average")
-	public ReturnModel findCategoryByMember(@RequestBody TemperatureModel temperatureModel) {
+	public ReturnModel findCategoryByMember(@RequestBody TimeIntervalModel timeIntervalModel) {
 		
-		return temperatureSerivceImpl.getBetweenDatastamp(temperatureModel.getStartTime(), temperatureModel.getEndTime());
+		return temperatureSerivceImpl.getBetweenDatastamp(timeIntervalModel.getStartTime(), timeIntervalModel.getEndTime());
 	}
 	
 }
