@@ -23,6 +23,10 @@
   display: block;
 }
 
+.pictureWidth {
+  width: 10px;
+}
+
 </style>
 <script type="text/javascript">
 	$(function() {
@@ -35,10 +39,21 @@
 			"changeYear" : true
 		});
 		
+		$("#startDate").change(function(){
+			$("#startDateShow").val($("#startDate").val());
+		});
+		
+		$("#endDate").change(function(){
+			$("#endDateShow").val($("#endDate").val());
+		});
+		
+		$("#startDateShow").attr("disabled",true);
+		$("#endDateShow").attr("disabled",true);
+		
 		$( "#btn" ).click(function() {
 			
-			$("#startDate").removeClass("changeBorderColor");
-			$("#endDate").removeClass("changeBorderColor");
+			$("#startDateShow").removeClass("changeBorderColor");
+			$("#endDateShow").removeClass("changeBorderColor");
 			$("#container").removeClass("displayGraphics");
 			$("#container").addClass("hideGraphics");
 			
@@ -55,6 +70,8 @@
 		});	
 		
 		$("#container").addClass("hideGraphics");
+		$("#startDate").addClass("pictureWidth");
+		$("#endDate").addClass("pictureWidth");
 		
 	});
 
@@ -62,11 +79,11 @@
 		
 		let errorMsg = "";
 		if (!startTime) {
-			$("#startDate").addClass("changeBorderColor");
+			$("#startDateShow").addClass("changeBorderColor");
 			errorMsg += "請輸入開始日期\n";
 		}
 		if (!endTime) {
-			$("#endDate").addClass("changeBorderColor");
+			$("#endDateShow").addClass("changeBorderColor");
 			errorMsg += "請輸入結束日期\n";
 		}
 
@@ -81,8 +98,8 @@
 			let allEndDate = new Date(endDateTemp[0], endDateTemp[1],
 					arrEndDate[0], arrEndDate[1], endMin);
 			if (allStartDate.getTime() >= allEndDate.getTime()) {
-				$("#startDate").addClass("changeBorderColor");
-				$("#endDate").addClass("changeBorderColor");
+				$("#startDateShow").addClass("changeBorderColor");
+				$("#endDateShow").addClass("changeBorderColor");
 				errorMsg += "開始時間需晚於結束時間";
 			}
 		}
@@ -104,7 +121,7 @@
 			success : function(data) {
 				if (data.result == "success") {
 					$("#container").addClass("displayGraphics");
-					highChartGraphics(data.averageList);
+					highChartGraphics(data.avgTemperatureList);
 				} else {
 					alert(data.message);
 				}
@@ -115,35 +132,69 @@
 		});
 	}
 	
-	function highChartGraphics(averageList){
+	function highChartGraphics(avgTemperatureList){
 		
 	
 	   let points = [];
 	   let linePoints = [];
 	   let categoriesText = [];
 	   
-		for (let i = 0; i < averageList.length; i++) {
+	   $.each(avgTemperatureList, function(index,avgTemperature) {
+		   let station = avgTemperature.station;
+		   let averageList = avgTemperature.averageList;
+		   $.each(averageList, function(index,average) {
+			   if(station == "A"){
+				   points.push([0, average]);
+			   }
+			   else if(station == "B"){
+				   points.push([ 1, average]);
+			   }
+			   else if(station == "C"){
+				   points.push([ 2, average]);
+			   }
+			   else if(station == "D"){
+				   points.push([ 3, average]);
+			   }
+			   else if(station == "E"){
+			       points.push([ 4, average]);
+			   }
+			  
+		   });
+	   }); 
+	//   points.push([1,2,3,4,5]);
+	//   points.push([1,2,3,4,5]);
+	   
+	   //points = [1,2,3,4,5,6,7,8,9,10];
+	   
+	//   points.push([6,7,8,9,10]);
+	/**	for (let i = 0; i < avgTemperatureList.length; i++) {
 			points.push([ 3, averageList[i] ]);
 			linePoints.push([ i , averageList[i] ]);
 			categoriesText.push("站別 :" + i);
-		}
+		} */
+		categoriesText.push("站別 :" + "A");
+	/**	categoriesText.push("站別 :" + "B");
+		categoriesText.push("站別 :" + "C");
+		categoriesText.push("站別 :" + "D");
+		categoriesText.push("站別 :" + "E"); */
 		
 		console.log(points);
-		console.log(linePoints);
+	//	console.log(linePoints);
 		
 		let title = {
 			text : "散點圖加折線圖"
 		};
 
 		let xAxis = {
-				categories:categoriesText
+				categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May']
 		};
+		
 
 		let yAxis = {
 			title : {
 				text : "溫度"
 			},
-			min : -1
+			min : 0
 		};
 
 		let series = [
@@ -163,7 +214,7 @@
 						}
 					},
 					enableMouseTracking : false
-				}, */
+				}, 
 				{
 					type : "line",
 					name : "折線圖2",
@@ -177,7 +228,7 @@
 						}
 					},
 					enableMouseTracking : false
-				},
+				},*/
 				{
 					type : "scatter",
 					name : "散點圖",
@@ -214,14 +265,16 @@
 </head>
 <body>
     <div id="container"></div>
-	<input id="startDate" name="startDate" />
+    <input id="startDateShow" />
+	<input type="image" id="startDate" name="startDate" src="/temperature/image/a.jpg" />
 	<select id="startMin">
 		<option value="00">00</option>
 		<option value="30">30</option>
 	</select> 請輸入開始日期時間
 	</br>
 	</br>
-	<input id="endDate" name="endDate" />
+	 <input id="endDateShow" />
+	<input id="endDate" type="image" name="endDate" src="/temperature/image/a.jpg" />
 	<select id="endMin">
 		<option value="00">00</option>
 		<option value="30">30</option>
