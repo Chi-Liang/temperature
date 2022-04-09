@@ -96,7 +96,7 @@ public class InsertDBSericeImpl implements InsertDBSerice {
 
 		cell = row.getCell(cellNum++);
 		Double doubleValue = cell.getNumericCellValue();
-		String ms = String.valueOf(Math.round(doubleValue));
+		String ms = String.valueOf(doubleValue);
 		temperature.setMs(ms);
 
 		cell = row.getCell(cellNum++);
