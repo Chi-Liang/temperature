@@ -11,7 +11,7 @@ import com.station.temperature.service.impl.TemperatureSerivceImpl;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class Abstract {
+public class AbstractTest {
 	
 	@Autowired
 	protected InsertDBSerice insertDBSericeImpl;
