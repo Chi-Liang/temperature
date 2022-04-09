@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
@@ -26,6 +27,8 @@ public class InsertDBSericeImpl implements InsertDBSerice {
 	@Autowired
 	private TemperatureRepository temperatureRepository;
 	
+	private static List<String> stationList = Arrays.asList("A","B","C","D","E");
+	
 	@Override
 	public boolean insertDB(String fileName) {
 
@@ -34,7 +37,12 @@ public class InsertDBSericeImpl implements InsertDBSerice {
 
 		try (var inputStream = new FileInputStream(filePath); var wb = new XSSFWorkbook(inputStream);) {
 			Instant startTime = Instant.now();
-			parseExcel(wb);
+			
+			stationList.forEach(s -> {
+				parseExcel(wb,s);
+			});
+			
+			
 			Instant endTime = Instant.now();
 			Duration duration = Duration.between(startTime, endTime);
 			log.info("花費時間  :" + duration.toMillis());
@@ -46,7 +54,7 @@ public class InsertDBSericeImpl implements InsertDBSerice {
 		return result;
 	}
 
-	public void parseExcel(Workbook workbook) {
+	public void parseExcel(Workbook workbook,String s) {
 		
 		int sheetNum = 0;
 		Sheet sheet = workbook.getSheetAt(sheetNum);
@@ -67,7 +75,7 @@ public class InsertDBSericeImpl implements InsertDBSerice {
 				if (row == null) {
 					continue;
 				}
-				Temperature temperature = convertRowToData(row);
+				Temperature temperature = convertRowToData(row,s);
 				temperatureLsit.add(temperature);
 			}
 			temperatureRepository.saveAll(temperatureLsit);
@@ -75,7 +83,7 @@ public class InsertDBSericeImpl implements InsertDBSerice {
 		});
 	}
 
-	private Temperature convertRowToData(Row row) {
+	private Temperature convertRowToData(Row row,String s) {
 
 		Temperature temperature = new Temperature();
 
@@ -92,9 +100,10 @@ public class InsertDBSericeImpl implements InsertDBSerice {
 		temperature.setMs(ms);
 
 		cell = row.getCell(cellNum++);
+		
 		String value = String.valueOf(cell.getNumericCellValue());
 		temperature.setValue(value);
-
+		temperature.setStation(s);
 		return temperature;
 	}
 

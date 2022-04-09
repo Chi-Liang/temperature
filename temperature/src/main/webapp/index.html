@@ -4,269 +4,24 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link href="/temperature/css/jquery-ui.min.css" rel="stylesheet">
-<link href="/temperature/css/jquery-ui-timepicker-addon.css"
-	rel="stylesheet">
+<link href="/temperature/css/jquery-ui-timepicker-addon.css" rel="stylesheet">
+<link href="/temperature/css/common.css" rel="stylesheet">	
 <script src="/temperature/js/jquery.min.js"></script>
 <script src="/temperature/js/jquery-ui.min.js"></script>
 <script src="/temperature/js/jquery-ui-timepicker-addon.min.js"></script>
 <script src="/temperature/js/highcharts.js"></script>
-<style type="text/css">
-.changeBorderColor {
-  border-color: red;
-}
-
-.hideGraphics {
-  display: none;
-}
-
-.displayGraphics {
-  display: block;
-}
-
-.pictureWidth {
-  width: 10px;
-}
-
-</style>
-<script type="text/javascript">
-	$(function() {
-		$('#startDate,#endDate').datetimepicker({
-			"dateFormat" : "yy/mm/dd",
-			"timeFormat" : "HH",
-			"hour" : "08",
-			"yearRange" : "-10:+10",
-			"changeMonth" : true,
-			"changeYear" : true
-		});
-		
-		$("#startDate").change(function(){
-			$("#startDateShow").val($("#startDate").val());
-		});
-		
-		$("#endDate").change(function(){
-			$("#endDateShow").val($("#endDate").val());
-		});
-		
-		$("#startDateShow").attr("disabled",true);
-		$("#endDateShow").attr("disabled",true);
-		
-		$( "#btn" ).click(function() {
-			
-			$("#startDateShow").removeClass("changeBorderColor");
-			$("#endDateShow").removeClass("changeBorderColor");
-			$("#container").removeClass("displayGraphics");
-			$("#container").addClass("hideGraphics");
-			
-			let startTime = $("#startDate").val();
-			let endTime = $("#endDate").val();
-			let startMin = $('#startMin').val();
-			let endMin = $('#endMin').val();
-			let errorMsg = checkInput(startTime,endTime,startMin,endMin);
-			if(errorMsg){
-				alert(errorMsg);
-				return;
-			}
-			ajaxCall(startTime,endTime,startMin,endMin);
-		});	
-		
-		$("#container").addClass("hideGraphics");
-		$("#startDate").addClass("pictureWidth");
-		$("#endDate").addClass("pictureWidth");
-		
-	});
-
-	function checkInput(startTime,endTime,startMin,endMin){
-		
-		let errorMsg = "";
-		if (!startTime) {
-			$("#startDateShow").addClass("changeBorderColor");
-			errorMsg += "請輸入開始日期\n";
-		}
-		if (!endTime) {
-			$("#endDateShow").addClass("changeBorderColor");
-			errorMsg += "請輸入結束日期\n";
-		}
-
-		if (!errorMsg) {
-			let startDateTemp = startTime.split("/");
-			let endDateTemp = endTime.split("/");
-			let arrStartDate = startDateTemp[2].split(" ");
-			let arrEndDate = endDateTemp[2].split(" ");
-
-			let allStartDate = new Date(startDateTemp[0], startDateTemp[1],
-					arrStartDate[0], arrStartDate[1], startMin);
-			let allEndDate = new Date(endDateTemp[0], endDateTemp[1],
-					arrEndDate[0], arrEndDate[1], endMin);
-			if (allStartDate.getTime() >= allEndDate.getTime()) {
-				$("#startDateShow").addClass("changeBorderColor");
-				$("#endDateShow").addClass("changeBorderColor");
-				errorMsg += "開始時間需晚於結束時間";
-			}
-		}
-		return errorMsg;
-	}
-	
-	function ajaxCall(startTime,endTime,startMin,endMin){
-		let obj = {};
-		obj.startTime = startTime + ":" + startMin + ":00";
-		obj.endTime = endTime + ":" + endMin + ":00";
-
-		$.ajax({
-			type : "POST",
-			url : "/temperature/api/temperature/average",
-			async : false,
-			dataType : 'json',
-			contentType : 'application/json; charset=utf-8',
-			data : JSON.stringify(obj),
-			success : function(data) {
-				if (data.result == "success") {
-					$("#container").addClass("displayGraphics");
-					highChartGraphics(data.avgTemperatureList);
-				} else {
-					alert(data.message);
-				}
-			},
-			error : function(xhr, ajaxOption, error) {
-				alert(xhr.responseText);
-			}
-		});
-	}
-	
-	function highChartGraphics(avgTemperatureList){
-		
-	
-	   let points = [];
-	   let linePoints = [];
-	   let categoriesText = [];
-	   
-	   $.each(avgTemperatureList, function(index,avgTemperature) {
-		   let station = avgTemperature.station;
-		   let averageList = avgTemperature.averageList;
-		   $.each(averageList, function(index,average) {
-			   if(station == "A"){
-				   points.push([0, average]);
-			   }
-			   else if(station == "B"){
-				   points.push([ 1, average]);
-			   }
-			   else if(station == "C"){
-				   points.push([ 2, average]);
-			   }
-			   else if(station == "D"){
-				   points.push([ 3, average]);
-			   }
-			   else if(station == "E"){
-			       points.push([ 4, average]);
-			   }
-			  
-		   });
-	   }); 
-	//   points.push([1,2,3,4,5]);
-	//   points.push([1,2,3,4,5]);
-	   
-	   //points = [1,2,3,4,5,6,7,8,9,10];
-	   
-	//   points.push([6,7,8,9,10]);
-	/**	for (let i = 0; i < avgTemperatureList.length; i++) {
-			points.push([ 3, averageList[i] ]);
-			linePoints.push([ i , averageList[i] ]);
-			categoriesText.push("站別 :" + i);
-		} */
-		categoriesText.push("站別 :" + "A");
-	/**	categoriesText.push("站別 :" + "B");
-		categoriesText.push("站別 :" + "C");
-		categoriesText.push("站別 :" + "D");
-		categoriesText.push("站別 :" + "E"); */
-		
-		console.log(points);
-	//	console.log(linePoints);
-		
-		let title = {
-			text : "散點圖加折線圖"
-		};
-
-		let xAxis = {
-				categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May']
-		};
-		
-
-		let yAxis = {
-			title : {
-				text : "溫度"
-			},
-			min : 0
-		};
-
-		let series = [
-			/**	{
-					type : "line",
-					name : "折線圖1",
-					data : [ [ 0, 1.11 ], [ 1, 5.99 ], [ 2, 5.11 ],
-							[ 3, 2.11 ], [ 4, 1.19 ], [ 5, 4.51 ], [ 6, 2.11 ],
-							[ 7, 17.11 ], [ 8, 6.61 ], [ 9, 6.91 ],
-							[ 10, 13.51 ] ],
-					marker : {
-						enabled : true
-					},
-					states : {
-						hover : {
-							lineWidth : 0
-						}
-					},
-					enableMouseTracking : false
-				}, 
-				{
-					type : "line",
-					name : "折線圖2",
-					data : linePoints,
-					marker : {
-						enabled : true
-					},
-					states : {
-						hover : {
-							lineWidth : 0
-						}
-					},
-					enableMouseTracking : false
-				},*/
-				{
-					type : "scatter",
-					name : "散點圖",
-					data : points,
-					marker : {
-						radius : 1,
-						symbol : "circle",
-						states : {
-							hover : {
-								enabled : true,
-								lineColor : "rgb(100,100,100)"
-							}
-						}
-					},
-					states : {
-						hover : {
-							marker : {
-								enabled : false
-							}
-						}
-					},
-					enableMouseTracking : false
-				} ];
-
-		let json = {};
-		json.title = title;
-		json.xAxis = xAxis;
-		json.yAxis = yAxis;
-		json.series = series;
-		$('#container').highcharts(json);
-
-	}
-</script>
+<script src="/temperature/js/jquery.blockUI.js"></script>
+<script src="/temperature/js/initial.js"></script>
+<script src="/temperature/js/commonService.js"></script>
+<script src="/temperature/js/ajaxService.js"></script>
+<script src="/temperature/js/highChartGraphics.js"></script>
 </head>
+
 <body>
+
     <div id="container"></div>
     <input id="startDateShow" />
-	<input type="image" id="startDate" name="startDate" src="/temperature/image/a.jpg" />
+	<input type="image" id="startDate" src="/temperature/images/date.jpg" />
 	<select id="startMin">
 		<option value="00">00</option>
 		<option value="30">30</option>
@@ -274,7 +29,7 @@
 	</br>
 	</br>
 	 <input id="endDateShow" />
-	<input id="endDate" type="image" name="endDate" src="/temperature/image/a.jpg" />
+	<input id="endDate" type="image" src="/temperature/images/date.jpg" />
 	<select id="endMin">
 		<option value="00">00</option>
 		<option value="30">30</option>
@@ -282,5 +37,6 @@
 	</br>
 	</br>
 	<button id="btn">搜尋</button>
+	
 </body>
 </html>

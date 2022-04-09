@@ -1,0 +1,15 @@
+.changeBorderColor {
+  border-color: red;
+}
+
+.hideGraphics {
+  display: none;
+}
+
+.displayGraphics {
+  display: block;
+}
+
+.pictureWidth {
+  width: 10px;
+}

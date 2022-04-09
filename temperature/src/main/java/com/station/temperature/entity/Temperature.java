@@ -23,7 +23,7 @@ public class Temperature {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 	
 	@Column(name = "datastamp")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
