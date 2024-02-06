@@ -36,6 +36,13 @@ public class TemperatureSerivceImpl implements TemperatureService {
 
 		try {
 			
+			Instant queryStartTime11 = Instant.now();
+			temperatureRepository.getBetweenDatastamp2();
+			Instant queryEndTime11 = Instant.now();
+			Duration duration11 = Duration.between(queryStartTime11, queryEndTime11);
+			log.info("花費時間  :" + duration11.toMillis());
+			
+			
 			Instant queryStartTime = Instant.now();
 			List<Temperature> temperatureList = temperatureRepository.getBetweenDatastamp(startTime, endTime);
 			
@@ -65,8 +72,8 @@ public class TemperatureSerivceImpl implements TemperatureService {
 			});
 			
 			Instant queryEndTime = Instant.now();
-			Duration duration = Duration.between(queryStartTime, queryEndTime);
-			log.info("花費時間  :" + duration.toMillis());
+			Duration duration22 = Duration.between(queryStartTime, queryEndTime);
+			log.info("花費時間  :" + duration22.toMillis());
 			
 //			Instant queryEndTime1 = Instant.now();
 //			Duration duration1 = Duration.between(queryStartTime1, queryEndTime1);
