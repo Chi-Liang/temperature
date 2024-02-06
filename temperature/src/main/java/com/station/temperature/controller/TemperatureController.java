@@ -20,6 +20,7 @@ public class TemperatureController {
 	@PostMapping("/temperature/average")
 	public ReturnModel findCategoryByMember(@RequestBody TimeIntervalModel timeIntervalModel) {
 		System.out.println("aaaaaaaaaa");
+		System.out.println("bbbbbbbbbb");
 		return temperatureSerivceImpl.getBetweenDatastamp(timeIntervalModel.getStartTime(), timeIntervalModel.getEndTime());
 	}
 	
