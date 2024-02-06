@@ -32,7 +32,7 @@ public class TemperatureUnitTest extends AbstractTest {
 	@Test
 	public void testRestApi() throws Exception {
 		
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+//		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
 		String jsonStr = new ObjectMapper()
 				.writeValueAsString(new TimeIntervalModel("2021-12-28 15:00:00", "2021-12-28 15:30:00"));
